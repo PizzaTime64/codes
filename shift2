@@ -1,0 +1,121 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+using namespace std;
+ 
+typedef struct node{
+    int berat;
+    struct node *next;
+}node;
+ 
+typedef struct{
+    node *first;
+    node *last;
+}data;
+ 
+void pushQueue(data* d,int inp)
+{
+   node *temp;
+   temp = new node;
+   temp->berat = inp;
+   temp->next = NULL;
+   if(d->first == NULL)
+    {
+                d->first = d->first = temp;
+                return;
+        }
+                d->first->next = temp;
+                d->first = temp;
+}
+ 
+void pushStack(data *d, int inp)
+{
+        node *temp;
+   temp = new node;
+        temp->berat = inp;
+        temp->next = d->first;
+        d->first = temp;
+}
+ 
+void popQueue(data* d)
+{
+        if(d->last == NULL && d->first == NULL) return;
+        node *temp;
+        temp = d->first;
+        d->first = d->first->next;
+        free(temp);
+}
+ 
+void popStack(data *d)
+{
+        if(d->first == NULL)
+        {
+                return;
+        }
+        node *temp;
+        temp = d->first;
+        d->first = d->first->next;
+        free(temp);
+}
+ 
+int main()
+{
+        data queue;
+        data stack;
+        queue.first = queue.last = NULL;
+        stack.first = stack.last = NULL;
+        int kbg, brd;
+        char inp1[22],inp2[11];
+        while(1)
+        {
+                scanf("%s",inp1);
+                if(strcmp(inp1,"Burung")==0) 
+                {
+                        scanf("%d",&brd);
+                        pushQueue(&queue, brd);
+                }
+                else if (strcmp(inp1,"Kambing")==0)
+                {
+                        scanf("%d",&kbg);
+                        pushStack(&stack, kbg);
+                }
+                else if (strcmp(inp1,"Brutus")==0)
+                {
+                        scanf("%s",inp2);
+                        if(strcmp(inp2,"Mau")==0)
+                        {
+                                if(queue.first == NULL && stack.first == NULL)
+                                {
+                                        puts("Brutus tidak makan");
+                                }
+                                else if(queue.first == NULL)
+                                {
+                                        printf("Ambil kambing %d kg dari galian\n",stack.first->berat);
+                                        popStack(&stack);
+                                }
+                                else if(stack.first == NULL)
+                                {
+                                        printf("Ambil burung %d kg dari cerobong\n",queue.first->berat);
+                                        popQueue(&queue);
+                                }
+                                else if(queue.first->berat >= stack.first->berat)
+                                {
+                                        printf("Ambil burung %d kg dari cerobong\n",queue.first->berat);
+                                        popQueue(&queue);
+                                }
+                                else
+                                {
+                                        printf("Ambil kambing %d kg dari galian\n",stack.first->berat);
+                                        popStack(&stack);
+                                }
+                        }
+                        else if(strcmp(inp2,"berpindah"))
+                        {
+                                return 0;
+                        }
+                }
+        }
+        return 0;
+}
+    
