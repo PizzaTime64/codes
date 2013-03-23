@@ -1,0 +1,101 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+using namespace std;
+
+typedef struct node{
+    int car;
+    struct node *next;
+}node;
+ 
+typedef struct{
+    node *front;
+    node *rear;
+}queue; 
+
+ 
+void push(queue* q,int panjang)
+{
+        node *temp;
+  	temp = new node;
+        temp->car = panjang;
+        temp->next = NULL;
+        if(q->front==NULL)
+		{
+                q->front=q->rear=temp;
+                return;
+        }
+                q->rear->next=temp;
+                q->rear=temp;
+}
+ 
+void pop(queue* q)
+{
+        if(q->rear == NULL && q->front == NULL) return;
+        node *temp;
+		temp = q->front;
+        q->front = q->front->next;
+        free(temp);
+}
+ 
+int showFront(queue *q)
+{
+        if(q->front != NULL) return q->front->car;
+        else return 0;
+}
+
+
+int main()
+{
+        queue left;
+        queue right;
+        left.front = NULL;
+		left.rear = NULL;
+        right.front = NULL;
+		right.rear = NULL;
+        
+        int t,kapasitas, carnums, carlenght, counter, temp=0;
+        char posisi[11];
+        scanf("%d",&t);
+        while(t--)
+		{
+                counter=0; //counter brp kali ferry jalan
+                scanf("%d %d",&kapasitas, &carnums);
+                kapasitas = kapasitas*100;
+                while(carnums--)
+				{
+                        scanf("%d %s",&carlenght, posisi);
+                        if(strcmp(posisi,"left") == 0) push(&left,carlenght);
+                        else if(strcmp(posisi,"right") == 0) push(&right,carlenght);
+                }
+                push(&left,0); //sign for end of car queues
+                push(&right,0);
+                while(1)
+				{
+                        
+                        while(1)
+						{
+                                temp = temp + showFront(&left);
+                                if(temp >= kapasitas || showFront(&left) == 0) break;
+                                else pop(&left);
+                        }
+                        counter++;
+                        if(left.front == left.rear && right.front == right.rear) break;
+                        temp=0;
+                        while(1)
+						{
+                                temp+=showFront(&right);
+                                if(temp>=kapasitas|| showFront(&right)==0) break;
+                                else pop(&right);
+                        }
+                        counter++;
+                        if(left.front == left.rear && right.front == right.rear) break;
+                        temp = 0;
+                }
+                pop(&left);
+				pop(&right);
+                printf("%d\n",counter);
+        }
+        return 0;
+}
