@@ -1,0 +1,66 @@
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+typedef struct node{
+        int operators;
+        node *next;
+        }node;
+        
+typedef struct{
+        node *top;
+        }stack;
+        
+void push(stack *s, int inp)
+{
+        node *temp;
+  	temp = new node;
+        temp->operators = inp;
+        temp->next = s->top;
+        s->top = temp;
+}
+ 
+void pop(stack *s)
+{
+        node *temp;
+		temp = s->top;
+        s->top = s->top->next;
+        free(temp);
+}
+ 
+int top(stack *s)
+{
+        return s->top->operators;
+}
+
+
+ 
+int main()
+{
+        stack s;
+        s.top = NULL;
+        int t;
+        char input[666];
+        scanf("%d",&t);
+		getchar();
+        while(t--)
+		{
+                gets(input);
+                for(int i=0 ; i<strlen(input) ; i++)
+				{
+                        if(input[i] >= 'a' && input[i] <= 'z') printf("%c", input[i]);
+                        else if(input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/' || input[i] == '^')
+						{
+                                push(&s,input[i]);
+                        }
+                        else if(input[i] == ')')
+						{
+                                printf("%c\n", top(&s));
+                                pop(&s);
+                        }
+                }
+        } 
+        return 0;
+}
