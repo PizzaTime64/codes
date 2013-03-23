@@ -1,0 +1,74 @@
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+typedef struct node{
+    int cardnums;
+    node *next;
+}node;
+        
+typedef struct{
+        node *front;
+        node *rear;
+}queue;
+ 
+void push(queue* q,int inp)
+{
+        node *temp;
+  	temp = new node;
+        temp->cardnums = inp;
+        temp->next = NULL;
+        if(q->front == NULL)
+		{
+            q->front = q->rear = temp;    
+        }
+        else
+        {
+            q->rear->next = temp;
+        	q->rear = temp;
+        }
+}
+ 
+void pop(queue* q)
+{
+        if(q->rear == NULL && q->front== NULL) return;
+        node *temp;
+		temp = q->front;
+        q->front = q->front->next;
+        free(temp);
+}
+ 
+int showFront(queue *q)
+{
+        if(q->front != NULL) return q->front->cardnums;
+}
+ 
+int main()
+{
+        while(1)
+		{
+                queue q;
+                q.front = NULL;
+				q.rear = NULL;
+                int cards;
+                scanf("%d",&cards);
+                if(cards == 0) break;
+                for(int i=1;i<=cards;i++)
+				{
+					push(&q,i);
+				}                
+                printf("Discarded cards:");
+                for(int i=2;i<=cards;i++)
+				{
+                        printf(" %d",showFront(&q));
+						pop(&q);
+                        push(&q,showFront(&q));      
+						pop(&q);
+                        if(q.front->next != NULL)printf(",");
+                }
+        printf("\nRemaining card: %d\n",showFront(&q));
+        }       
+return 0;
+}
