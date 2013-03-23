@@ -1,0 +1,94 @@
+#include<cstdio>
+#include<stdlib.h>
+#include<cstring>
+using namespace std;
+
+
+typedef struct node{
+        int bracket;
+        node *next;
+}node;
+        
+typedef struct{
+        node *top;
+}stack;
+        
+void push(stack *s, int inp)
+{
+        node *temp;
+  	temp = new node;
+        temp->bracket = inp;
+        temp->next = s->top;
+        s->top = temp;
+}
+ 
+void pop(stack *s)
+{
+        if(s->top == NULL)
+		{
+			return;
+		}
+        node *temp;
+		temp = s->top;
+        s->top = s->top->next;
+        free(temp);
+} 
+
+ 
+void popSemua(stack *s)
+{
+        node *temp;
+        while(s->top != NULL)
+		{
+        	temp=s->top;
+        	s->top=s->top->next;
+        	free(temp);
+        }        
+}
+
+int showTop(stack *s)
+{
+        if(s->top == NULL)
+		{
+			return 0;
+		}
+        else 
+			return s->top->bracket;
+}
+ 
+int main()
+{
+        stack s;
+        s.top = NULL;
+        int t, sign;
+        char input[666];
+        scanf("%d",&t);
+		getchar();
+        while(t--)
+		{
+                sign = 0;
+                gets(input);
+                int i=0;
+                for(i=0;i<strlen(input);i++)
+				{
+                        if(input[i]=='(' || input[i]=='[') push(&s,input[i]);
+                        else if(input[i]==')' && showTop(&s) != 40) 
+						{
+							sign++; popSemua(&s);
+							break;
+						}
+                        else if(input[i]==')' && showTop(&s) == 40) pop(&s);
+                        else if(input[i]==']' && showTop(&s) != 91) 
+						{
+							sign++; 
+							popSemua(&s); 
+							break;
+						}
+                        else if(input[i]==']' && showTop(&s) == 91) pop(&s);
+                }
+                if(sign == 0 && s.top == NULL) printf("Yes\n");
+                else printf("No\n");
+                if(s.top!=NULL) popSemua(&s);
+        }
+        return 0;
+}
