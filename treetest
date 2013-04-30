@@ -1,0 +1,158 @@
+#include<cstdio>
+#include<cstdlib>
+
+typedef struct node{
+  char data;
+	node *left;
+	node *right;	
+	node *parent;
+};
+void insertTreeNode(node **nd, char data){
+	if((*nd) == NULL){
+		(*nd) = (node*) malloc(sizeof(node));
+		(*nd)->data = data;
+		(*nd)->left = NULL;
+		(*nd)->right = NULL;
+		(*nd)->parent = NULL;
+		return;
+	}else{	
+		node *subroot = *nd;
+		if(data <= subroot->data ){
+			insertTreeNode(&(subroot->left),data);
+			subroot->left->parent = subroot;
+		}else{
+			insertTreeNode(&(subroot->right),data);
+			subroot->right->parent = subroot;
+		}
+	}
+}
+void deleteNode(node **nd){
+	node *del = *nd; node *temp;
+	//Jika node punya 2 sub-node
+	if(del->left != NULL && del->right != NULL){
+		temp = del->left;
+		while(temp->right != NULL)
+			temp = temp->right;
+		del->data = temp->data;
+		if (temp->parent->left == temp) 
+			temp->parent->left = NULL;
+		else
+			temp->parent->right = NULL;
+		free(temp);
+		return;
+	}
+	//Jika node = leaf
+	if(del->left == NULL && del->right == NULL){
+		if (del->parent->left == del) 
+			del->parent->left = NULL;
+		else
+			del->parent->right = NULL;
+		free(del);
+		return;
+	}
+	//Jika node punya 1 sub-node
+	if(del->left == NULL)
+		temp = del->right; //ada right subtree
+	else
+		temp = del->left; //ada left subtree
+	if (del->parent->left == del) 
+		del->parent->left = temp;
+	else
+		del->parent->right = temp;
+	free(del);
+	return;	
+}
+void deleteTreeNode(node **nd, char data){
+	if(data == (*nd)->data){
+		deleteNode(nd);//node found
+		return;
+	}else{
+		if(data < (*nd)->data)//look in left subtree
+			deleteTreeNode(&((*nd)->left),data);
+		else //look in right subtree
+			deleteTreeNode(&((*nd)->right),data);
+	}
+}
+/* print tree in order */
+/* 1. Traverse the left subtree. 
+   2. Visit the root. 
+   3. Traverse the right subtree. 
+*/
+void printTreeInOrder(node *nd){
+	if(nd == NULL) return;
+	printTreeInOrder(nd->left);
+	printf("%c ",nd->data);
+	printTreeInOrder(nd->right);
+}
+node* lookUp(node *nd, char key){
+	if(nd == NULL) return nd;
+	if(nd->data == key) return nd;
+	else {
+		if(key < nd->data) return lookUp(nd->left, key);
+		else return lookUp(nd->right, key);
+	}
+}
+node* LCA(node *subroot, node *p, node *q){
+	node *left, *right;
+	if(subroot == NULL) return NULL;
+	if(subroot->left == p || subroot->left == q
+		|| subroot->right == p || subroot->right == q) 
+		return subroot;
+	else {
+		left = LCA(subroot->left,p,q);
+		right = LCA(subroot->right,p,q);
+		if(left && right) 
+			return subroot;
+		else 
+			return (left) ? left : right;
+	}	
+}
+/* recursion routine to find path */
+void pathFinder(node *nd, char path[], int pathLength){
+	if(nd == NULL) return;
+	path[pathLength++] = nd->data;
+
+	/* Leaf node is the end of a path */
+	if(nd->left == NULL && nd->right == NULL){
+		int i;
+		for(i = 0; i < pathLength; i++) printf("%c ",path[i]);
+		printf("\n");	
+	}else {
+		pathFinder(nd->left, path, pathLength);
+		pathFinder(nd->right, path, pathLength);
+	}
+}
+int main(){
+	node *root = NULL;
+	insertTreeNode(&root,'F');	
+	insertTreeNode(&root,'B');
+	insertTreeNode(&root,'A');
+	insertTreeNode(&root,'D');
+	insertTreeNode(&root,'C');  
+	insertTreeNode(&root,'E');
+	insertTreeNode(&root,'G');
+	insertTreeNode(&root,'I');
+	insertTreeNode(&root,'H');
+	/* print tree in order */
+	printf("in order \n");
+	printTreeInOrder(root);	
+	printf("\n");
+	
+	/* Lowest Common Ancestor */
+	node *temp, *nd1, *nd2;
+	nd1 = lookUp(root,'A'); nd2 = lookUp(root,'C'); 
+	temp = LCA(root, nd1, nd2);
+	printf("LCA of A and C is %c\n", temp->data);
+	
+	nd1 = lookUp(root,'E'); nd2 = lookUp(root,'H'); 
+	temp = LCA(root, nd1, nd2);
+	printf("LCA of E and H is %c\n", temp->data);	
+
+	/* print out all of its root-to-leaf paths */
+	printf("printing paths ... \n");
+	char path[100];
+	pathFinder(root,path,0);
+	
+	system("PAUSE");  
+	return 0;	
+}	
