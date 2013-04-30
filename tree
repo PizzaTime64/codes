@@ -1,0 +1,140 @@
+#include <cstdio>
+#include <cstdlib>
+#include <stack>
+#include <queue>
+using namespace std;
+
+typedef struct node{
+  char data;
+	node *left;
+	node *right;
+	node *parent;
+};
+
+void insertNode(node **nd, char data)
+{
+	//Insert Node jika tree masih kosong.
+	if((*nd)== NULL)
+	{
+		(*nd) = (*node) malloc(sizeof(node));
+		(*nd)->data = data;
+		(*nd)->left = NULL;
+		(*nd)->right = NULL;
+		(*nd)->parent = NULL;
+		return;
+	}
+	
+	else
+	{
+		node *subroot = *nd;
+		if(data <= subroot->data)
+		{
+			insertNode(&(subroot->left),data);
+			subroot->left->parent = subroot;
+		}
+		else
+		{
+			insertNode(&(subroot->right),data);
+			subroot->right->parent = subroot;
+		}
+	}
+}
+
+void inOrder(node *nd)
+{
+	//kiri - root - kanan
+	if(nd == NULL) return;
+	inOrder(nd->left);
+	printf("%c",nd->data);
+	inOrder(nd->right);
+}
+
+void preOrder(node *nd)
+{
+	//root - kiri - kanan
+	if(nd == NULL) return;
+	printf("%c",nd->data);
+	preOrder(nd->left);
+	preOrder(nd->right);
+}
+
+void postOrder(node *nd)
+{
+	//kiri - kanan - root
+	if(nd == NULL) return;
+	postOrder(nd->left);
+	postOrder(nd->right);
+	printf("%c",nd->data);
+}
+
+void delNode(node **nd)
+{
+	node *del = *nd;
+	node *temp;
+	//jika punya 2 sub node.
+	if(del->left != NULL && del->right != NULL)
+	{
+		temp = del->left;
+		while(temp->right != NULL)
+		{
+			temp = temp->right;
+		}
+		del->data = temp->data;
+		if(temp->parent->left == temp)
+		{
+			temp->parent->left = NULL;
+		}
+		else
+		{
+			temp->parent->right = NULL;
+		}
+		free(temp);
+		return;
+	}
+	
+	//jika node nya leaf
+	if(del->left == NULL & del->right == NULL)
+	{
+		if(del->parent->left == del)
+		{
+			del->parent->left = NULL;
+		}
+		else
+		{
+			del->parent->right= NULL;
+		}
+		free(del);
+		return;
+	}
+	
+	if(del->left == NULL)
+	{
+		temp = del->right;
+	}
+	else
+		temp = del->left;
+	if(del->parent->left == del)
+	{
+		del->parent->left = temp;
+	}
+	else
+	{
+		del->parent->right = temp;
+	}
+	free(del);
+	return;	
+}
+
+void deleteTreeNode(node **nd, char data){
+	if(data == (*nd)->data){
+		deleteNode(nd);//node found
+		return;
+	}else{
+		if(data < (*nd)->data)//look in left subtree
+			deleteTreeNode(&((*nd)->left),data);
+		else //look in right subtree
+			deleteTreeNode(&((*nd)->right),data);
+	}
+
+
+
