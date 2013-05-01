@@ -1,0 +1,51 @@
+#include<cstdio>
+#include<cstdlib>
+
+typedef struct node{
+  int data;
+	node *left;
+	node *right;	
+	node *parent;
+};
+void insertTreeNode(node **nd, int data){
+	if((*nd) == NULL){
+		(*nd) = (node*) malloc(sizeof(node));
+		(*nd)->data = data;
+		(*nd)->left = NULL;
+		(*nd)->right = NULL;
+		(*nd)->parent = NULL;
+		return;
+	}else{	
+		node *subroot = *nd;
+		if(data <= subroot->data ){
+			insertTreeNode(&(subroot->left),data);
+			subroot->left->parent = subroot;
+		}else{
+			insertTreeNode(&(subroot->right),data);
+			subroot->right->parent = subroot;
+		}
+	}
+}
+
+void printTreeInOrder(node *nd){
+	if(nd == NULL) return;
+	printTreeInOrder(nd->right);	
+	printTreeInOrder(nd->left);
+	printf("%d ",nd->data);
+}
+
+int main(){
+	node *root = NULL;
+	insertTreeNode(&root,6);	
+	insertTreeNode(&root,9);
+	insertTreeNode(&root,2);
+	insertTreeNode(&root,5);
+	insertTreeNode(&root,3);  
+	insertTreeNode(&root,4);
+	insertTreeNode(&root,8);
+	insertTreeNode(&root,0);
+	/* print tree in order */
+	printf("in order \n");
+	printTreeInOrder(root);	
+	printf("\n");
+}
