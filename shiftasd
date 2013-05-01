@@ -2,7 +2,7 @@
 #include<cstdlib>
 
 typedef struct node{
-  int data;
+	int data;
 	node *left;
 	node *right;	
 	node *parent;
@@ -34,18 +34,47 @@ void printTreeInOrder(node *nd){
 	printf("%d ",nd->data);
 }
 
+void clearTree(node *nd)
+{
+	if(nd == NULL) return;
+	if(nd->left != NULL)
+	{
+		clearTree(nd->left);
+	}
+	if(nd->right != NULL)
+	{
+		clearTree(nd->right);
+	}
+	nd->data = NULL;
+	free(nd);
+}
+
+
+
 int main(){
 	node *root = NULL;
-	insertTreeNode(&root,6);	
+	int inp;
+	while(1)
+	{
+		scanf("%d",&inp);
+		if(inp == 0)
+		{
+			printTreeInOrder(root);
+			puts("");
+			clearTree(root);
+		}
+		else
+		{		
+			insertTreeNode(&root,inp);
+		}
+	}
+	/*insertTreeNode(&root,6);	
 	insertTreeNode(&root,9);
 	insertTreeNode(&root,2);
 	insertTreeNode(&root,5);
 	insertTreeNode(&root,3);  
 	insertTreeNode(&root,4);
 	insertTreeNode(&root,8);
-	insertTreeNode(&root,0);
+	insertTreeNode(&root,0); */
 	/* print tree in order */
-	printf("in order \n");
-	printTreeInOrder(root);	
-	printf("\n");
 }
